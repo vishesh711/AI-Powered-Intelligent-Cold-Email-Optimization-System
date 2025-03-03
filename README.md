@@ -2,8 +2,7 @@
 
 Welcome to the **AI-Powered Intelligent Cold Email Optimization System** repository. This project is designed to optimize cold email marketing campaigns through intelligent segmentation, data analysis, and real‑time performance dashboards.
 
-![Banner](./Sample_Img/banner.png)  
-*(*Replace `banner.png` with an appropriate image from your Sample_Img folder if needed.*)*
+![Banner](./Screenshot 2025-03-02 at 11.22.06 PM.png)  
 
 ## 📋 Table of Contents
 

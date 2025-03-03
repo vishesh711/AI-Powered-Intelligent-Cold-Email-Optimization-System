@@ -252,9 +252,3 @@ Detailed API documentation is available at http://localhost:8000/docs when the s
 ├── frontend/                  # React
 └── docker/                    # Docker
 ```
-
-## 📸 Images & Screenshots
-
-## 💻 Contributing
-
-## 📄 License

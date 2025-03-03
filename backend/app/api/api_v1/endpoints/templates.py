@@ -1,12 +1,13 @@
 from typing import Any, List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.orm import Session
 
 from app import crud, models, schemas
 from app.api import deps
 from app.services.llm_service import llm_service
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy.orm import Session
 
 router = APIRouter()
+
 
 @router.get("/", response_model=List[schemas.EmailTemplate])
 def get_templates(
@@ -18,12 +19,8 @@ def get_templates(
     """
     Retrieve email templates with optional filtering.
     """
-    return crud.template.get_multi(
-        db, 
-        skip=skip, 
-        limit=limit,
-        tag=tag
-    )
+    return crud.template.get_multi(db, skip=skip, limit=limit, tag=tag)
+
 
 @router.post("/", response_model=schemas.EmailTemplate)
 def create_template(
@@ -36,6 +33,7 @@ def create_template(
     """
     template = crud.template.create(db=db, obj_in=template_in)
     return template
+
 
 @router.get("/{template_id}", response_model=schemas.EmailTemplate)
 def get_template(
@@ -50,6 +48,7 @@ def get_template(
     if not template:
         raise HTTPException(status_code=404, detail="Email template not found")
     return template
+
 
 @router.put("/{template_id}", response_model=schemas.EmailTemplate)
 def update_template(
@@ -67,6 +66,7 @@ def update_template(
     template = crud.template.update(db=db, db_obj=template, obj_in=template_in)
     return template
 
+
 @router.delete("/{template_id}", response_model=schemas.EmailTemplate)
 def delete_template(
     *,
@@ -82,6 +82,7 @@ def delete_template(
     template = crud.template.remove(db=db, id=template_id)
     return template
 
+
 @router.post("/generate", response_model=schemas.EmailGenerationResponse)
 def generate_email_content(
     *,
@@ -96,14 +97,15 @@ def generate_email_content(
         campaign_context=generation_params.campaign_context,
         tone=generation_params.tone,
         length=generation_params.length,
-        instructions=generation_params.instructions
+        instructions=generation_params.instructions,
     )
-    
+
     return {
         "subject": generated_content.get("subject", ""),
         "body": generated_content.get("body", ""),
-        "variations": generated_content.get("variations", [])
+        "variations": generated_content.get("variations", []),
     }
+
 
 @router.post("/improve", response_model=schemas.EmailImprovementResponse)
 def improve_email_content(
@@ -117,11 +119,11 @@ def improve_email_content(
     improved_content = llm_service.improve_email(
         original_content=improvement_params.original_content,
         improvement_type=improvement_params.improvement_type,
-        instructions=improvement_params.instructions
+        instructions=improvement_params.instructions,
     )
-    
+
     return {
         "improved_content": improved_content.get("content", ""),
         "changes": improved_content.get("changes", []),
-        "explanation": improved_content.get("explanation", "")
-    } 
+        "explanation": improved_content.get("explanation", ""),
+    }

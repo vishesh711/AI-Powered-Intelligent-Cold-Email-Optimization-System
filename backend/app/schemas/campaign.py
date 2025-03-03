@@ -1,7 +1,9 @@
-from typing import Optional, List, Dict, Any
 from datetime import datetime
-from pydantic import BaseModel, validator
 from enum import Enum
+from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, validator
+
 
 class CampaignStatus(str, Enum):
     DRAFT = "draft"
@@ -9,6 +11,7 @@ class CampaignStatus(str, Enum):
     PAUSED = "paused"
     COMPLETED = "completed"
     ARCHIVED = "archived"
+
 
 class CampaignBase(BaseModel):
     name: str
@@ -20,7 +23,7 @@ class CampaignBase(BaseModel):
     segment_id: Optional[int] = None
     settings: Optional[Dict[str, Any]] = None
 
-    @validator('settings')
+    @validator("settings")
     def validate_settings(cls, v):
         if v is None:
             return {
@@ -29,15 +32,18 @@ class CampaignBase(BaseModel):
                 "max_emails_per_day": 50,
                 "follow_up_days": [3, 7, 14],
                 "track_opens": True,
-                "track_clicks": True
+                "track_clicks": True,
             }
         return v
+
 
 class CampaignCreate(CampaignBase):
     pass
 
+
 class CampaignUpdate(CampaignBase):
     name: Optional[str] = None
+
 
 class Campaign(CampaignBase):
     id: int
@@ -47,10 +53,11 @@ class Campaign(CampaignBase):
     class Config:
         orm_mode = True
 
+
 class CampaignWithStats(Campaign):
     total_prospects: int
     emails_sent: int
     emails_opened: int
     emails_clicked: int
     emails_replied: int
-    meetings_booked: int 
+    meetings_booked: int

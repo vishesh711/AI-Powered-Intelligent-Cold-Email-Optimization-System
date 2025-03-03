@@ -1,9 +1,10 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime, Enum, JSON
-from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
 import enum
 
 from app.db.base_class import Base
+from sqlalchemy import JSON, Column, DateTime, Enum, ForeignKey, Integer, String, Text
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
+
 
 class EmailStatusEnum(str, enum.Enum):
     DRAFT = "draft"
@@ -14,6 +15,7 @@ class EmailStatusEnum(str, enum.Enum):
     REPLIED = "replied"
     BOUNCED = "bounced"
     FAILED = "failed"
+
 
 class Email(Base):
     __tablename__ = "emails"
@@ -37,6 +39,7 @@ class Email(Base):
     prospect = relationship("Prospect", back_populates="emails")
     campaign = relationship("Campaign", back_populates="emails")
 
+
 class EmailTemplate(Base):
     __tablename__ = "email_templates"
 
@@ -48,4 +51,4 @@ class EmailTemplate(Base):
     tags = Column(JSON)
     performance = Column(JSON)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now()) 
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())

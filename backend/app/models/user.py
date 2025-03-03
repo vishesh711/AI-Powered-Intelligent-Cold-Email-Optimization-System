@@ -1,8 +1,8 @@
-from sqlalchemy import Boolean, Column, Integer, String, DateTime
+from app.core.security import get_password_hash, verify_password
+from app.db.base_class import Base
+from sqlalchemy import Boolean, Column, DateTime, Integer, String
 from sqlalchemy.sql import func
 
-from app.db.base_class import Base
-from app.core.security import get_password_hash, verify_password
 
 class User(Base):
     __tablename__ = "users"
@@ -21,4 +21,4 @@ class User(Base):
         self.hashed_password = get_password_hash(password)
 
     def verify_password(self, password: str) -> bool:
-        return verify_password(password, self.hashed_password) 
+        return verify_password(password, self.hashed_password)

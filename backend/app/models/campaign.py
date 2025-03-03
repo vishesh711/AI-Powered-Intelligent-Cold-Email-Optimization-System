@@ -1,9 +1,10 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime, Enum, JSON
-from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
 import enum
 
 from app.db.base_class import Base
+from sqlalchemy import JSON, Column, DateTime, Enum, ForeignKey, Integer, String, Text
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
+
 
 class CampaignStatusEnum(str, enum.Enum):
     DRAFT = "draft"
@@ -11,6 +12,7 @@ class CampaignStatusEnum(str, enum.Enum):
     PAUSED = "paused"
     COMPLETED = "completed"
     ARCHIVED = "archived"
+
 
 class Campaign(Base):
     __tablename__ = "campaigns"
@@ -30,4 +32,4 @@ class Campaign(Base):
     # Relationships
     template = relationship("EmailTemplate")
     segment = relationship("ProspectSegment")
-    emails = relationship("Email", back_populates="campaign") 
+    emails = relationship("Email", back_populates="campaign")

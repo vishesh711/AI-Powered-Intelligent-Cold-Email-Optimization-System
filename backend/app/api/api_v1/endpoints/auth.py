@@ -1,21 +1,20 @@
 from datetime import timedelta
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
-
 from app import crud, models, schemas
 from app.api import deps
 from app.core import security
 from app.core.config import settings
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.orm import Session
 
 router = APIRouter()
 
+
 @router.post("/login", response_model=schemas.Token)
 def login_access_token(
-    db: Session = Depends(deps.get_db),
-    form_data: OAuth2PasswordRequestForm = Depends()
+    db: Session = Depends(deps.get_db), form_data: OAuth2PasswordRequestForm = Depends()
 ) -> Any:
     """
     OAuth2 compatible token login, get an access token for future requests.
@@ -29,7 +28,7 @@ def login_access_token(
             detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     return {
         "access_token": security.create_access_token(
@@ -37,6 +36,7 @@ def login_access_token(
         ),
         "token_type": "bearer",
     }
+
 
 @router.post("/demo-login", response_model=schemas.Token)
 def demo_login() -> Any:
@@ -53,6 +53,7 @@ def demo_login() -> Any:
         "token_type": "bearer",
     }
 
+
 @router.post("/register", response_model=schemas.User)
 def register_user(
     *,
@@ -68,9 +69,10 @@ def register_user(
             status_code=400,
             detail="A user with this email already exists",
         )
-    
+
     user = crud.user.create(db, obj_in=user_in)
     return user
+
 
 @router.post("/password-recovery/{email}", response_model=schemas.Msg)
 def recover_password(email: str, db: Session = Depends(deps.get_db)) -> Any:
@@ -81,10 +83,11 @@ def recover_password(email: str, db: Session = Depends(deps.get_db)) -> Any:
     if not user:
         # Don't reveal that the user doesn't exist
         return {"msg": "Password recovery email sent"}
-    
+
     # In a real implementation, this would send an email with a password reset link
     # For now, just return a success message
     return {"msg": "Password recovery email sent"}
+
 
 @router.post("/reset-password", response_model=schemas.Msg)
 def reset_password(
@@ -98,4 +101,4 @@ def reset_password(
     """
     # In a real implementation, this would verify the token and update the user's password
     # For now, just return a success message
-    return {"msg": "Password updated successfully"} 
+    return {"msg": "Password updated successfully"}

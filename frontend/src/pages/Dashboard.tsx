@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
   Box,
   Heading,
@@ -8,7 +9,6 @@ import {
   StatNumber,
   StatHelpText,
   StatArrow,
-  StatGroup,
   Card,
   CardHeader,
   CardBody,
@@ -26,56 +26,67 @@ import {
   Badge,
 } from '@chakra-ui/react';
 import { FiMail, FiUsers, FiBarChart2, FiCalendar } from 'react-icons/fi';
-import { Line } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
 
-// Register ChartJS components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
+// Define the shape of our dashboard data with TypeScript interface
+interface DashboardData {
+  activeCampaigns: number;
+  activeCampaignChange: number;
+  emailsSent: number;
+  emailsSentChange: number;
+  openRate: number;
+  openRateChange: number;
+  meetingsBooked: number;
+  meetingsBookedChange: number;
+}
 
-const Dashboard = () => {
-  // Sample data for charts
-  const responseRateData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    datasets: [
-      {
-        label: 'Response Rate',
-        data: [12, 19, 15, 22, 25, 28],
-        fill: false,
-        borderColor: 'rgb(75, 192, 192)',
-        tension: 0.1,
-      },
-    ],
+// Initial data with proper typing
+const initialDashboardData: DashboardData = {
+  activeCampaigns: 12,
+  activeCampaignChange: 23.36,
+  emailsSent: 2543,
+  emailsSentChange: 12.05,
+  openRate: 42.3,
+  openRateChange: 9.05,
+  meetingsBooked: 28,
+  meetingsBookedChange: 18.87
+};
+
+const Dashboard: React.FC = () => {
+  // Set up state for dashboard data and loading state with proper typing
+  const [dashboardData, setDashboardData] = useState<DashboardData>(initialDashboardData);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  // Function to fetch data from API
+  const fetchDashboardData = async (): Promise<void> => {
+    setLoading(true);
+    try {
+      // Make sure the API URL is defined
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000/api/v1';
+      const response = await axios.get(`${apiUrl}/dashboard-stats`);
+      
+      // Validate and set the data
+      if (response.data) {
+        setDashboardData(response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+      // Optionally set some error state here
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const meetingBookedData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    datasets: [
-      {
-        label: 'Meetings Booked',
-        data: [3, 5, 4, 7, 9, 12],
-        fill: false,
-        borderColor: 'rgb(153, 102, 255)',
-        tension: 0.1,
-      },
-    ],
-  };
+  // Poll the backend every 30 seconds for updated data
+  useEffect(() => {
+    // Initial fetch
+    fetchDashboardData();
+    
+    // Set up polling interval
+    const intervalId = setInterval(fetchDashboardData, 30000); // 30000 ms = 30 sec
+    
+    // Clean up interval on component unmount
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <Box>
@@ -100,10 +111,12 @@ const Dashboard = () => {
                 </Box>
                 <Box>
                   <StatLabel>Active Campaigns</StatLabel>
-                  <StatNumber>12</StatNumber>
+                  <StatNumber>
+                    {loading ? 'Loading...' : dashboardData.activeCampaigns}
+                  </StatNumber>
                   <StatHelpText>
                     <StatArrow type="increase" />
-                    23.36%
+                    {dashboardData.activeCampaignChange}%
                   </StatHelpText>
                 </Box>
               </Flex>
@@ -126,10 +139,12 @@ const Dashboard = () => {
                 </Box>
                 <Box>
                   <StatLabel>Total Prospects</StatLabel>
-                  <StatNumber>2,543</StatNumber>
+                  <StatNumber>
+                    {loading ? 'Loading...' : dashboardData.emailsSent}
+                  </StatNumber>
                   <StatHelpText>
                     <StatArrow type="increase" />
-                    12.05%
+                    {dashboardData.emailsSentChange}%
                   </StatHelpText>
                 </Box>
               </Flex>
@@ -151,11 +166,13 @@ const Dashboard = () => {
                   <Icon as={FiBarChart2} boxSize={5} />
                 </Box>
                 <Box>
-                  <StatLabel>Response Rate</StatLabel>
-                  <StatNumber>28.3%</StatNumber>
+                  <StatLabel>Open Rate</StatLabel>
+                  <StatNumber>
+                    {loading ? 'Loading...' : `${dashboardData.openRate}%`}
+                  </StatNumber>
                   <StatHelpText>
                     <StatArrow type="increase" />
-                    5.14%
+                    {dashboardData.openRateChange}%
                   </StatHelpText>
                 </Box>
               </Flex>
@@ -178,10 +195,12 @@ const Dashboard = () => {
                 </Box>
                 <Box>
                   <StatLabel>Meetings Booked</StatLabel>
-                  <StatNumber>42</StatNumber>
+                  <StatNumber>
+                    {loading ? 'Loading...' : dashboardData.meetingsBooked}
+                  </StatNumber>
                   <StatHelpText>
                     <StatArrow type="increase" />
-                    16.67%
+                    {dashboardData.meetingsBookedChange}%
                   </StatHelpText>
                 </Box>
               </Flex>
@@ -190,15 +209,19 @@ const Dashboard = () => {
         </Card>
       </SimpleGrid>
 
-      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6} mb={8}>
+      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6} mb={8}>
         <Card>
           <CardHeader>
             <Heading size="md">Response Rate Trend</Heading>
           </CardHeader>
           <CardBody>
-            <Box height="250px">
-              <Line data={responseRateData} options={{ maintainAspectRatio: false }} />
-            </Box>
+            <Text>Jan: 12%</Text>
+            <Text>Feb: 19%</Text>
+            <Text>Mar: 15%</Text>
+            <Text>Apr: 22%</Text>
+            <Text>May: 25%</Text>
+            <Text>Jun: 28%</Text>
+            <Text fontWeight="bold" mt={4}>Trend: Increasing</Text>
           </CardBody>
         </Card>
 
@@ -207,9 +230,13 @@ const Dashboard = () => {
             <Heading size="md">Meetings Booked Trend</Heading>
           </CardHeader>
           <CardBody>
-            <Box height="250px">
-              <Line data={meetingBookedData} options={{ maintainAspectRatio: false }} />
-            </Box>
+            <Text>Jan: 3</Text>
+            <Text>Feb: 5</Text>
+            <Text>Mar: 4</Text>
+            <Text>Apr: 7</Text>
+            <Text>May: 9</Text>
+            <Text>Jun: 12</Text>
+            <Text fontWeight="bold" mt={4}>Trend: Increasing</Text>
           </CardBody>
         </Card>
       </SimpleGrid>

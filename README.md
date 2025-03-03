@@ -1,19 +1,22 @@
 # AI-Powered Intelligent Cold Email Optimization System
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-0.1.0-green.svg)
+Welcome to the **AI-Powered Intelligent Cold Email Optimization System** repository. This project is designed to optimize cold email marketing campaigns through intelligent segmentation, data analysis, and real‑time performance dashboards.
 
-A sophisticated AI-driven platform that revolutionizes cold email outreach through prospect analysis, personalized content generation, real-time engagement tracking, and ethical communication practices.
+![Banner](./Sample_Img/banner.png)  
+*(*Replace `banner.png` with an appropriate image from your Sample_Img folder if needed.*)*
 
 ## 📋 Table of Contents
 
 - [Overview](#overview)
 - [Features](#features)
 - [System Architecture](#system-architecture)
-- [Installation](#installation)
-  - [Prerequisites](#prerequisites)
-  - [Setup](#setup)
-  - [Deployment](#deployment)
+- [Project Structure](#project-structure)
+- [Setup & Installation](#setup--installation)
+- [Running the Application](#running-the-application)
+  - [Full System (Backend + Frontend)](#full-system-backend--frontend)
+  - [Frontend-Only Mode](#frontend-only-mode)
+  - [Docker-based Frontend](#docker-based-frontend)
+- [Images & Screenshots](#images--screenshots)
 - [Usage](#usage)
   - [Dashboard](#dashboard)
   - [Campaigns](#campaigns)
@@ -29,9 +32,7 @@ A sophisticated AI-driven platform that revolutionizes cold email outreach throu
 
 ## 🔍 Overview
 
-The AI-Powered Intelligent Cold Email Optimization System is designed to transform how businesses approach cold email outreach. By leveraging artificial intelligence, the system analyzes prospects, generates personalized content, tracks engagement in real-time, and ensures ethical communication practices.
-
-This platform helps sales and marketing teams increase their email open rates, response rates, and ultimately conversion rates through data-driven insights and AI-powered optimization.
+This system combines a powerful backend (built using Python and FastAPI) with a dynamic React frontend (using Chakra UI) to provide actionable insights for cold email campaigns. The frontend features real‑time data updates (via polling) and a modern UI to help you monitor campaign effectiveness.
 
 ## ✨ Features
 
@@ -62,7 +63,15 @@ The system consists of:
 - **Email Service**: SMTP integration for sending and tracking emails
 - **Analytics Engine**: Real-time data processing for performance metrics
 
-## 🚀 Installation
+## 🚀 Project Structure
+
+```
+├── backend/                   # REST
+├── frontend/                  # React
+└── docker/                    # Docker
+```
+
+## 🚀 Setup & Installation
 
 ### Prerequisites
 
@@ -125,6 +134,26 @@ The system consists of:
    Default login credentials:
    - Email: admin@example.com
    - Password: admin
+
+## 🚀 Running the Application
+
+### Full System (Backend + Frontend)
+
+To run the full system, follow the deployment steps above.
+
+### Frontend-Only Mode
+
+To run the frontend without the backend, use the following command:
+```bash
+npm run start
+```
+
+### Docker-based Frontend
+
+To run the frontend in a containerized environment, use the following command:
+```bash
+docker run -p 3000:3000 yourusername/cold-email-optimization-system-frontend
+```
 
 ## 📊 Usage
 
@@ -217,3 +246,15 @@ Detailed API documentation is available at http://localhost:8000/docs when the s
 ## 💻 Development
 
 ### Project Structure
+
+```
+├── backend/                   # REST
+├── frontend/                  # React
+└── docker/                    # Docker
+```
+
+## 📸 Images & Screenshots
+
+## 💻 Contributing
+
+## 📄 License

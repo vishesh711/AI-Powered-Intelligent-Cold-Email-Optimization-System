@@ -1,8 +1,8 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime
+from app.db.base_class import Base
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-from app.db.base_class import Base
 
 class Company(Base):
     __tablename__ = "companies"
@@ -18,6 +18,7 @@ class Company(Base):
 
     # Relationships
     prospects = relationship("Prospect", back_populates="company")
+
 
 class Prospect(Base):
     __tablename__ = "prospects"
@@ -43,6 +44,7 @@ class Prospect(Base):
     segment = relationship("ProspectSegment", back_populates="prospects")
     emails = relationship("Email", back_populates="prospect")
 
+
 class ProspectSegment(Base):
     __tablename__ = "prospect_segments"
 
@@ -53,4 +55,4 @@ class ProspectSegment(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     # Relationships
-    prospects = relationship("Prospect", back_populates="segment") 
+    prospects = relationship("Prospect", back_populates="segment")

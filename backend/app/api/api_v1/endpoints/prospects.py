@@ -1,12 +1,13 @@
 from typing import Any, List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query, File, UploadFile
-from sqlalchemy.orm import Session
 
 from app import crud, models, schemas
 from app.api import deps
 from app.services.segmentation_service import segmentation_service
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
+from sqlalchemy.orm import Session
 
 router = APIRouter()
+
 
 @router.get("/", response_model=List[schemas.Prospect])
 def get_prospects(
@@ -22,14 +23,15 @@ def get_prospects(
     Retrieve prospects with optional filtering.
     """
     return crud.prospect.get_multi(
-        db, 
-        skip=skip, 
+        db,
+        skip=skip,
         limit=limit,
         search=search,
         company=company,
         industry=industry,
-        segment_id=segment_id
+        segment_id=segment_id,
     )
+
 
 @router.post("/", response_model=schemas.Prospect)
 def create_prospect(
@@ -42,6 +44,7 @@ def create_prospect(
     """
     prospect = crud.prospect.create(db=db, obj_in=prospect_in)
     return prospect
+
 
 @router.get("/{prospect_id}", response_model=schemas.Prospect)
 def get_prospect(
@@ -56,6 +59,7 @@ def get_prospect(
     if not prospect:
         raise HTTPException(status_code=404, detail="Prospect not found")
     return prospect
+
 
 @router.put("/{prospect_id}", response_model=schemas.Prospect)
 def update_prospect(
@@ -73,6 +77,7 @@ def update_prospect(
     prospect = crud.prospect.update(db=db, db_obj=prospect, obj_in=prospect_in)
     return prospect
 
+
 @router.delete("/{prospect_id}", response_model=schemas.Prospect)
 def delete_prospect(
     *,
@@ -87,6 +92,7 @@ def delete_prospect(
         raise HTTPException(status_code=404, detail="Prospect not found")
     prospect = crud.prospect.remove(db=db, id=prospect_id)
     return prospect
+
 
 @router.post("/upload-csv", response_model=schemas.ProspectImportResponse)
 def upload_prospects_csv(
@@ -103,8 +109,9 @@ def upload_prospects_csv(
         "total_rows": 100,
         "imported": 95,
         "errors": 5,
-        "error_details": ["Row 12: Missing email", "Row 45: Invalid email format"]
+        "error_details": ["Row 12: Missing email", "Row 45: Invalid email format"],
     }
+
 
 @router.post("/segment", response_model=schemas.SegmentationResult)
 def segment_prospects(
@@ -117,7 +124,7 @@ def segment_prospects(
     """
     # Get prospect data from database
     prospects = crud.prospect.get_multi(db=db, limit=1000)
-    
+
     # Convert to format expected by segmentation service
     prospect_data = [
         {
@@ -131,13 +138,13 @@ def segment_prospects(
         }
         for p in prospects
     ]
-    
+
     # Perform segmentation
     result = segmentation_service.segment_prospects(
         prospect_data=prospect_data,
         algorithm=segmentation_params.algorithm,
         n_clusters=segmentation_params.n_clusters,
-        params=segmentation_params.params
+        params=segmentation_params.params,
     )
-    
-    return result 
+
+    return result

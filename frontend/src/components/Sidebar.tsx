@@ -1,28 +1,28 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
+  IconButton,
   Box,
   CloseButton,
   Flex,
   Icon,
   useColorModeValue,
-  Link,
+  Text,
   Drawer,
   DrawerContent,
-  Text,
   useDisclosure,
   BoxProps,
   FlexProps,
 } from '@chakra-ui/react';
 import {
   FiHome,
-  FiUsers,
-  FiMail,
-  FiFileText,
-  FiBarChart2,
+  FiTrendingUp,
+  FiCompass,
+  FiStar,
   FiSettings,
+  FiMenu,
 } from 'react-icons/fi';
 import { IconType } from 'react-icons';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 interface LinkItemProps {
   name: string;
@@ -32,17 +32,20 @@ interface LinkItemProps {
 
 const LinkItems: Array<LinkItemProps> = [
   { name: 'Dashboard', icon: FiHome, path: '/' },
-  { name: 'Prospects', icon: FiUsers, path: '/prospects' },
-  { name: 'Campaigns', icon: FiMail, path: '/campaigns' },
-  { name: 'Templates', icon: FiFileText, path: '/templates' },
-  { name: 'Analytics', icon: FiBarChart2, path: '/analytics' },
+  { name: 'Campaigns', icon: FiTrendingUp, path: '/campaigns' },
+  { name: 'Prospects', icon: FiCompass, path: '/prospects' },
+  { name: 'Templates', icon: FiStar, path: '/templates' },
   { name: 'Settings', icon: FiSettings, path: '/settings' },
 ];
 
-export default function Sidebar() {
+interface SidebarProps {
+  children: ReactNode;
+}
+
+export default function Sidebar({ children }: SidebarProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <Box minH="100vh" bg={useColorModeValue('gray.50', 'gray.900')}>
+    <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
       <SidebarContent
         onClose={() => onClose}
         display={{ base: 'none', md: 'block' }}
@@ -59,21 +62,22 @@ export default function Sidebar() {
           <SidebarContent onClose={onClose} />
         </DrawerContent>
       </Drawer>
+      {/* mobilenav */}
+      <MobileNav display={{ base: 'flex', md: 'none' }} onOpen={onOpen} />
+      <Box ml={{ base: 0, md: 60 }} p="4">
+        {children}
+      </Box>
     </Box>
   );
 }
 
-interface SidebarProps extends BoxProps {
+interface SidebarContentProps extends BoxProps {
   onClose: () => void;
 }
 
-const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  
+const SidebarContent = ({ onClose, ...rest }: SidebarContentProps) => {
   return (
     <Box
-      transition="3s ease"
       bg={useColorModeValue('white', 'gray.900')}
       borderRight="1px"
       borderRightColor={useColorModeValue('gray.200', 'gray.700')}
@@ -88,16 +92,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
-        <NavItem 
-          key={link.name} 
-          icon={link.icon} 
-          path={link.path}
-          isActive={location.pathname === link.path}
-          onClick={() => {
-            navigate(link.path);
-            onClose();
-          }}
-        >
+        <NavItem key={link.name} icon={link.icon} path={link.path}>
           {link.name}
         </NavItem>
       ))}
@@ -108,13 +103,15 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
 interface NavItemProps extends FlexProps {
   icon: IconType;
   path: string;
-  isActive?: boolean;
-  children: React.ReactNode;
+  children: string;
 }
 
-const NavItem = ({ icon, path, isActive, children, ...rest }: NavItemProps) => {
+const NavItem = ({ icon, path, children, ...rest }: NavItemProps) => {
+  const location = useLocation();
+  const isActive = location.pathname === path;
+  
   return (
-    <Link href="#" style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
+    <Link to={path} style={{ textDecoration: 'none' }}>
       <Flex
         align="center"
         p="4"
@@ -142,5 +139,35 @@ const NavItem = ({ icon, path, isActive, children, ...rest }: NavItemProps) => {
         {children}
       </Flex>
     </Link>
+  );
+};
+
+interface MobileNavProps extends FlexProps {
+  onOpen: () => void;
+}
+
+const MobileNav = ({ onOpen, ...rest }: MobileNavProps) => {
+  return (
+    <Flex
+      ml={{ base: 0, md: 60 }}
+      px={{ base: 4, md: 24 }}
+      height="20"
+      alignItems="center"
+      bg={useColorModeValue('white', 'gray.900')}
+      borderBottomWidth="1px"
+      borderBottomColor={useColorModeValue('gray.200', 'gray.700')}
+      justifyContent="flex-start"
+      {...rest}>
+      <IconButton
+        variant="outline"
+        onClick={onOpen}
+        aria-label="open menu"
+        icon={<FiMenu />}
+      />
+
+      <Text fontSize="2xl" ml="8" fontFamily="monospace" fontWeight="bold">
+        Cold Email AI
+      </Text>
+    </Flex>
   );
 }; 

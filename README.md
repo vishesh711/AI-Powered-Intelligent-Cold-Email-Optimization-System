@@ -2,7 +2,8 @@
 
 Welcome to the **AI-Powered Intelligent Cold Email Optimization System** repository. This project is designed to optimize cold email marketing campaigns through intelligent segmentation, data analysis, and real‑time performance dashboards.
 
-![Banner](./Screenshot 2025-03-02 at 11.22.06 PM.png)  
+![Banner](./Sample_Img/banner.png)  
+*(*Replace `banner.png` with an appropriate image from your Sample_Img folder if needed.*)*
 
 ## 📋 Table of Contents
 
@@ -28,6 +29,7 @@ Welcome to the **AI-Powered Intelligent Cold Email Optimization System** reposit
 - [Development](#development)
 - [Contributing](#contributing)
 - [License](#license)
+- [Troubleshooting](#troubleshooting)
 
 ## 🔍 Overview
 
@@ -251,3 +253,25 @@ Detailed API documentation is available at http://localhost:8000/docs when the s
 ├── frontend/                  # React
 └── docker/                    # Docker
 ```
+
+## 📸 Images & Screenshots
+
+## 💻 Contributing
+
+## 📄 License
+
+## Troubleshooting
+
+### TypeScript Errors in Sidebar Component
+
+If you encounter TypeScript errors in the Sidebar component related to the `onClose` function, make sure you're passing the function directly:
+
+```typescript
+// Incorrect:
+<SidebarContent onClose={() => onClose} />
+
+// Correct:
+<SidebarContent onClose={onClose} />
+```
+
+The `onClose` function from `useDisclosure()` is already a function reference, so it doesn't need to be wrapped in an arrow function.
